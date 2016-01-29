@@ -9,10 +9,10 @@ import std.algorithm.searching,
        std.conv;
 import core.memory;
 
-immutable staticStrage = false;
+immutable primitiveStrage = false;
 
 class VirtualMachine {
-  static if (staticStrage) {
+  static if (primitiveStrage) {
     string[] code;
     ubyte[] memory;
     int[int] brackets;
@@ -37,7 +37,7 @@ class VirtualMachine {
 
   private void initVM() {
     GC.disable();
-    static if (staticStrage) {
+    static if (primitiveStrage) {
       code.length   = 30000;
       memory.length = 30000;
     } else {
@@ -49,7 +49,7 @@ class VirtualMachine {
 
   public void process(string input) {
     string[] _code = opTable.compile(input);
-    static if (!staticStrage) {
+    static if (!primitiveStrage) {
       code.reallocate(_code.length);
       memory.reallocate(_code.length);
       brackets.reallocate(_code.length);
@@ -126,7 +126,7 @@ class VirtualMachine {
       }
     }
 
-    static if (!staticStrage) {
+    static if (!primitiveStrage) {
       code.free;
       memory.free;
     }
