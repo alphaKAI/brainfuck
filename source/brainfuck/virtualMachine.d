@@ -7,7 +7,6 @@ import std.algorithm.searching,
        std.stdio,
        std.string,
        std.conv;
-import core.memory;
 
 immutable primitiveStrage = false;
 
@@ -36,7 +35,6 @@ class VirtualMachine {
   }
 
   private void initVM() {
-    GC.disable();
     static if (primitiveStrage) {
       code.length   = 30000;
       memory.length = 30000;
