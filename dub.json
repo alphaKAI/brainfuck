@@ -1,6 +1,6 @@
 {
 	"name": "brainfuck",
-	"description": "A minimal Brainfuck Implements in D.",
+	"description": "A minimal Brainfuck Implement in D.",
 	"copyright": "Copyright © 2016, alphaKAI",
 	"authors": ["alphakai"],
   "license":"MIT",
