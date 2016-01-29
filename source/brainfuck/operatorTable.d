@@ -2,20 +2,23 @@ module brainfuck.operatorTable;
 import std.algorithm.searching,
        std.algorithm.iteration,
        std.string,
-       std.range;
+       std.range,
+       std.conv;
 
 class OperatorTable {
   private string[string] table;
   private static immutable string[] operators = [">", "<", "+", "-", ".", ",", "[", "]"];
+  private bool useOriginalToken;
 
   this(string[string] _table) {
     foreach(key, value; _table) {
       if (validKey(key)) {
-        table[key] = value;
+        table[value] = key;
       } else {
         throw new Error("Invalid operator \"" ~ key ~ "\" was given.");
       }
     }
+    useOriginalToken = true;
   }
 
   this() {
@@ -34,6 +37,14 @@ class OperatorTable {
 
   public static string[] removeTrash(string key) {
     return key.split("").filter!(x => validKey(x)).array;
+  }
+
+  public string[] compile(string input) {
+    if (useOriginalToken) {
+      return removeTrash(input.to!dstring.split("").map!(x => lookupTable(x.to!string)).join);
+    } else {
+      return removeTrash(input);
+    }
   }
 
   private bool keyExists(string key) {

@@ -7,16 +7,13 @@ import std.stdio,
        std.string;
 
 class REPL {
-  private OperatorTable opTable;
   private VirtualMachine vm;
 
   this(OperatorTable table) {
-    opTable = table;
     vm = new VirtualMachine(table);
   }
 
   this() {
-    opTable = new OperatorTable;
     vm = new VirtualMachine;
   }
 

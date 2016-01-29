@@ -26,14 +26,14 @@ class VirtualMachine {
   }
 
   public void process(string input) {
-    string[] _code = opTable.removeTrash(input);
+    string[] _code = opTable.compile(input);
     code.reallocate(_code.length);
     memory.reallocate(_code.length);
 
     code = _code;
 
     for (ulong index; index < code.size; index++) {
-      switch (opTable.lookupTable(code[index])) {
+      switch (code[index]) {
         case ">":
           memoryIndex++;
           break;
