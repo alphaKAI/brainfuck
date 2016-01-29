@@ -13,7 +13,13 @@ Copyright (C) alphaKAI 2016
   
 #Usage
 ##Run as Interpreter
-% ./brainfuck  
-##Run with exists file
-% ./brainfuck foo.b  
 
+```zsh
+% ./brainfuck  
+```
+
+##Run with exists file
+
+```zsh
+% ./brainfuck foo.b  
+```
