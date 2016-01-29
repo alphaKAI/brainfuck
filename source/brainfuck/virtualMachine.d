@@ -2,11 +2,26 @@ module brainfuck.virtualMachine;
 
 import brainfuck.virtualMemory,
        brainfuck.operatorTable;
-import std.stdio;
+import std.algorithm.searching,
+       std.array,
+       std.stdio,
+       std.string,
+       std.conv;
+import core.memory;
+
+immutable staticStrage = false;
 
 class VirtualMachine {
-  private VirtualMemory!string code;
-  private VirtualMemory!ubyte memory;
+  static if (staticStrage) {
+    string[] code;
+    ubyte[] memory;
+    int[int] brackets;
+  } else {
+    private VirtualMemory!string code;
+    private VirtualMemory!ubyte memory;
+    private VirtualMemory!int brackets;
+  }
+  
   private OperatorTable opTable;
   private ulong memoryIndex;
 
@@ -21,18 +36,52 @@ class VirtualMachine {
   }
 
   private void initVM() {
-    code    = new VirtualMemory!string;
-    memory  = new VirtualMemory!ubyte;
+    GC.disable();
+    static if (staticStrage) {
+      code.length   = 30000;
+      memory.length = 30000;
+    } else {
+      code     = new VirtualMemory!string;
+      memory   = new VirtualMemory!ubyte;
+      brackets =new VirtualMemory!int;
+    }
   }
 
   public void process(string input) {
     string[] _code = opTable.compile(input);
-    code.reallocate(_code.length);
-    memory.reallocate(_code.length);
+    static if (!staticStrage) {
+      code.reallocate(_code.length);
+      memory.reallocate(_code.length);
+      brackets.reallocate(_code.length);
+    } else {
+      code.length     = _code.length;
+      memory.length   = _code.length;
+    }
 
     code = _code;
 
-    for (ulong index; index < code.size; index++) {
+    // Optimization
+    int[] leftstack;
+    int pc;
+    for (int i; i < code.length; i++) {
+      string c = code[i];
+      if (!canFind(opTable.operators, c)) {
+        continue;
+      }
+
+      if (c == "[") {
+        leftstack ~= pc;
+      } else if (c == "]" && leftstack.length != 0) {
+        int left = leftstack[$ - 1];
+        leftstack.popBack();
+        int right = pc;
+        brackets[left] = right;
+        brackets[right] = left;
+      }
+      pc++;
+    }
+
+    for (int index; index < code.length; index++) {
       switch (code[index]) {
         case ">":
           memoryIndex++;
@@ -51,7 +100,8 @@ class VirtualMachine {
           break;
 
         case ".":
-          write(cast(char)(memory[memoryIndex]));
+          write(memory[memoryIndex].to!char);
+          stdout.flush();
           break;
 
         case ",":
@@ -62,31 +112,13 @@ class VirtualMachine {
 
         case "[":
           if (memory[memoryIndex] == 0) {
-            int depth;
-
-            for (index++; depth > 0 || code[index] != "]"; index++) {
-              if (code[index] == "[") {
-                depth++;
-              } else if (code[index] == "]") {
-                depth--;
-              }
-            }
+            index = brackets[index];
           }
           break;
 
         case "]":
           if (memory[memoryIndex] != 0) {
-            int depth;
-
-            for (index--; depth > 0 || code[index] != "["; index--) {
-              if (code[index] == "]") {
-                depth++;
-              } else if (code[index] == "[") {
-                depth--;
-              }
-            }
-
-            index--;
+            index = brackets[index];
           }
           break;
 
@@ -94,8 +126,10 @@ class VirtualMachine {
       }
     }
 
-    code.free;
-    memory.free;
+    static if (!staticStrage) {
+      code.free;
+      memory.free;
+    }
     memoryIndex = 0;
   }
 }

@@ -7,7 +7,7 @@ import std.algorithm.searching,
 
 class OperatorTable {
   private string[string] table;
-  private static immutable string[] operators = [">", "<", "+", "-", ".", ",", "[", "]"];
+  public static immutable string[] operators = [">", "<", "+", "-", ".", ",", "[", "]"];
   private bool useOriginalToken;
 
   this(string[string] _table) {
@@ -35,13 +35,13 @@ class OperatorTable {
     }
   }
 
-  public static string[] removeTrash(string key) {
-    return key.split("").filter!(x => validKey(x)).array;
+  public string[] removeTrash(string key) {
+    return key.split("").filter!(x => keyExists(x)).array;
   }
 
   public string[] compile(string input) {
     if (useOriginalToken) {
-      return removeTrash(input.to!dstring.split("").map!(x => lookupTable(x.to!string)).join);
+      return removeTrash(input.split("").filter!(x => table.keys.canFind(x)).map!(x => lookupTable(x)).join);
     } else {
       return removeTrash(input);
     }
@@ -51,7 +51,7 @@ class OperatorTable {
     return table.keys.canFind(key);
   }
 
-  private static bool validKey(string key) {
+  private bool validKey(string key) {
     return operators.canFind(key);
   }
 }

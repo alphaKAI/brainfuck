@@ -5,39 +5,38 @@ import std.conv;
 class VirtualMemory(T) {
   private T[] memory;
   private immutable ulong defaultMemorySize = 300000;
-  private ulong memorySize;
+  private size_t memorySize;
 
-  this(ulong size) {
+  this(size_t size = defaultMemorySize) {
     memorySize = size;
     initMemory;
   }
 
-  this() {
-    memorySize = defaultMemorySize;
-    initMemory;
-  }
-
-  public void allocate(ulong size) {
+  public void allocate(size_t size) {
     memory.length = size;
     syncMemorySize;
   }
 
-  public void expandSize(ulong size) {
+  public void expandSize(size_t size) {
     memory.length += size;
     syncMemorySize;
   }
 
-  public void reallocate(ulong size) {
-    free;
+  public void reallocate(size_t size) {
+    memory = null;
     memory.length = size;
     syncMemorySize;
   }
 
   public void free() {
-    memory = [];
+    memory = null;
+
     syncMemorySize;
   }
 
+  @property ulong length(){
+    return size;
+  }
   @property ulong size() {
     return memorySize;
   }
