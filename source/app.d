@@ -1,16 +1,16 @@
 import brainfuck.virtualMachine,
-       brainfuck.interpreter,
+       brainfuck.repl,
        brainfuck.operatorTable;
 import std.stdio,
        std.file;
 
 void main(string[] args) {
   VirtualMachine vm;
-  Interpreter interpreter;
+  REPL repl;
 
   if (args.length == 1) {
-    interpreter = new Interpreter;
-    interpreter.interpreter;
+    repl = new REPL;
+    repl.repl;
   } else if (args.length == 2) {
     string fileName = args[1];
     if (exists(fileName)) {

@@ -1,4 +1,4 @@
-module brainfuck.interpreter;
+module brainfuck.repl;
 
 import brainfuck.virtualMemory,
        brainfuck.operatorTable,
@@ -6,7 +6,7 @@ import brainfuck.virtualMemory,
 import std.stdio,
        std.string;
 
-class Interpreter {
+class REPL {
   private OperatorTable opTable;
   private VirtualMachine vm;
 
@@ -20,7 +20,9 @@ class Interpreter {
     vm = new VirtualMachine;
   }
 
-  void interpreter() {
+  void repl() {
+    writeln("You can exit the REPL with exit");
+
     while (true) {
       write("=> ");
       string input = readln.chomp;

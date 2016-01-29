@@ -12,7 +12,7 @@ Copyright (C) alphaKAI 2016
   
   
 #Usage
-##Run as Interpreter
+##Run as repl
 
 ```zsh
 % ./brainfuck  
