@@ -6,11 +6,6 @@ A minimal Brainfuck Implementation in D.
 * Latest DUB(A D's package manager and build tool.)
   
   
-#License
-The MIT License.  
-Copyright (C) alphaKAI 2016  
-  
-  
 #Usage
 ##Run as repl
 
@@ -23,3 +18,8 @@ Copyright (C) alphaKAI 2016
 ```zsh
 % ./brainfuck foo.b  
 ```
+  
+  
+#License
+The MIT License.  
+Copyright (C) alphaKAI 2016  
