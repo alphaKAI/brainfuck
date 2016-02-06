@@ -10,6 +10,15 @@ import std.algorithm.searching,
 
 // DAFAULT IS USEING VIRTUALMEMORY BUT PRIMITIVE-STRAGE IS FASTHER AND PRIMITIVE-POINTER IS FASTEST
 // YOU CAN'T to be true primitiveStrage and primitivePointer at the same time.
+/*
+  RESULT OF BENCHMARK(examples/bench.b)
+  Envrionment : MacBookPro Retina mid 2014(CPU: i5 2.6 GHz(2C, 4T), RAM: 16GB)
+                DMD 2.070
+
+  USEING VirtualMemory class (default) : 18.54s (slowest)
+  USEING primitiveStrage option        : 9.49s  (middle)
+  USEING primitivePointer option       : 7.64s  (fastest)
+ */
 immutable primitiveStrage  = false;
 immutable primitivePointer = false;
 
@@ -19,17 +28,17 @@ static if (primitivePointer) {
 
 class VirtualMachine {
   static if (primitiveStrage) {
-    char[] code;
-    ubyte[] memory;
+    char[]   code;
+    ubyte[]  memory;
     int[int] brackets;
   } else static if (primitivePointer) {
-    char* code;
-    ubyte* memory;
+    char*    code;
+    ubyte*   memory;
     int[int] brackets;
   } else {
-    private VirtualMemory!char code;
+    private VirtualMemory!char  code;
     private VirtualMemory!ubyte memory;
-    private VirtualMemory!int brackets;
+    private VirtualMemory!int   brackets;
   }
   
   private OperatorTable opTable;
