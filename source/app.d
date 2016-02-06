@@ -1,8 +1,12 @@
 import brainfuck.virtualMachine,
        brainfuck.repl,
-       brainfuck.operatorTable;
-import std.stdio,
-       std.file;
+       brainfuck.parser,
+       brainfuck.operatorTable,
+       brainfuck.vmoperators;
+import std.string,
+       std.stdio,
+       std.file,
+       std.conv;
 
 void main(string[] args) {
   VirtualMachine vm;
@@ -15,6 +19,8 @@ void main(string[] args) {
     string fileName = args[1];
     if (exists(fileName)) {
       vm = new VirtualMachine;
+/*      OperatorTable opTable = new OperatorTable;
+      vm.vmExec(parser(opTable.compile(readText(fileName)).join.to!(char[])));*/
       vm.process(readText(fileName));
     } else {
       writeln("File not found such a file : ", fileName);

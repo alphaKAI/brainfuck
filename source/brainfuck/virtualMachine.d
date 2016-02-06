@@ -1,7 +1,10 @@
 module brainfuck.virtualMachine;
 
 import brainfuck.virtualMemory,
-       brainfuck.operatorTable;
+       brainfuck.operatorTable,
+       brainfuck.dlinkedlist,
+       brainfuck.vmoperators,
+       brainfuck.optimaizer;
 import std.algorithm.searching,
        std.array,
        std.stdio,
@@ -65,6 +68,64 @@ class VirtualMachine {
       code     = new VirtualMemory!char;
       memory   = new VirtualMemory!ubyte;
       brackets = new VirtualMemory!int;
+    }
+  }
+
+  public void vmExec(DLinkedList!vmOperator ops) {
+    bracketOprimaize(ops);
+    
+    GC.realloc(code,   ops.length *  char.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
+    GC.realloc(memory, ops.length * ubyte.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
+    
+    for(ops.parentList.thisNode = ops.parentList.firstNode; ops.parentList.thisNode != null; ops.parentList.thisNode = ops.parentList.thisNode.nextNode) {
+      vmOperator op = ops.parentList.thisNode.value;
+      write(op.type);
+      switch (op.type) {
+        case 0:
+          memoryIndex++;
+          break;
+
+        case 1:
+          memoryIndex--;
+          break;
+
+        case 2:
+          ++memory[memoryIndex];
+          break;
+
+        case 3:
+          --memory[memoryIndex];
+          break;
+
+        case 4:
+          write(memory[memoryIndex].to!char);
+          stdout.flush();
+          break;
+
+        case 5:
+          string buf;
+          while((buf = readln()) == null || !buf.length){}
+          memory[memoryIndex] = cast(ubyte)buf[0];
+          break;
+
+        case 6:
+          if (memory[memoryIndex] == 0) {
+            ops.parentList.thisNode = ops.parentList.thisNode.nextNode;
+          } else {
+            ops.parentList.thisNode = ops.parentList.thisNode.nextNode.nextNode;
+          }
+          break;
+
+        case 7:
+          if (memory[memoryIndex] != 0) {
+            ops.parentList.thisNode = ops.parentList.thisNode.nextNode;
+          } else {
+            ops.parentList.thisNode = ops.parentList.thisNode.nextNode.nextNode;
+          
+          }
+          break;
+        default: break;
+      }
     }
   }
 
