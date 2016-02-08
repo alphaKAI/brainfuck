@@ -14,8 +14,6 @@ import std.algorithm.searching,
 
 import core.memory;
 
-// DAFAULT IS USEING VIRTUALMEMORY BUT PRIMITIVE-STRAGE IS FASTHER AND PRIMITIVE-POINTER IS FASTEST
-// YOU CAN'T to be true primitiveStrage and primitivePointer at the same time.
 /*
   RESULT OF BENCHMARK(examples/bench.b)
   Envrionment : MacBookPro Retina mid 2014(CPU: i5 2.6 GHz(2C, 4T), RAM: 16GB)
@@ -30,6 +28,7 @@ import core.memory;
     USEING primitiveStrage  option               : 8.80s  (middle)
     USEING usevirtualmemory option               : 18.78s (slowest)
  */
+// YOU CAN'T to be true primitiveStrage and primitivePointer at the same time.
 
 immutable primitiveStrage  = false; // depricated
 immutable useVirtualMemory = false; // depricated
