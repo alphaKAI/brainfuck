@@ -20,7 +20,7 @@ import core.memory;
                 DMD 2.070
 
   NEWVM
-    USEING DLinkedList and raw Pointer (default) : 6.77s (fastest)
+    USEING DLinkedList and raw Pointer (default) : 5.49s (fastest)
     USEING primitiveStrage  option               : not available - new vm only support default way
     USEING usevirtualmemory option               : not available - new vm only support default way
   OLDVM
@@ -116,7 +116,7 @@ class VirtualMachine {
 
           case 7:
             if (memory[memoryIndex] != 0) {
-              ops.parentList.thisNode = ops.parentList.thisNode.pair.prevNode;
+              ops.parentList.thisNode = ops.parentList.thisNode.pair;
             }
 
             break;
