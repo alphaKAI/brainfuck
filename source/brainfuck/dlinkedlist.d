@@ -7,6 +7,7 @@ class DLinkedList(T) {
   struct Node {
     Node* prevNode = null;
     Node* nextNode = null;
+    Node* pair     = null;
     T value;
   }
 

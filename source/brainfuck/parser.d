@@ -13,19 +13,19 @@ DLinkedList!vmOperator parser(char[] chars) {
   foreach (c; chars) {
     vmOperator top;
     switch (c) {
-      case vmAdd:
+      case vmRight:
         top.type = 0;
         vmol.addNode(top);
         break;
-      case vmSub:
+      case vmLeft:
         top.type = 1;
         vmol.addNode(top);
         break;
-      case vmRight:
+      case vmAdd:
         top.type = 2;
         vmol.addNode(top);
         break;
-      case vmLeft:
+      case vmSub:
         top.type = 3;
         vmol.addNode(top);
         break;

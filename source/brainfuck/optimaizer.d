@@ -8,27 +8,20 @@ void bracketOprimaize(DLinkedList!vmOperator ops) {
 
   ops.Node*[] leftstack;
 
-  foreach (op; ops) {
-
-    if (op.type == 6) {
-      leftstack ~= ops.parentList.thisNode;
-    } else if (op.type == 7 && leftstack.length != 0) {
+  for(ops.parentList.thisNode = ops.parentList.firstNode;
+      ops.parentList.thisNode != null; ops.parentList.thisNode = ops.parentList.thisNode.nextNode) {
+    ops.Node* pc = ops.parentList.thisNode;
+    
+    if (ops.parentList.thisNode.value.type == 6) {
+      leftstack ~= pc;
+    } else if (ops.parentList.thisNode.value.type == 7 && leftstack.length != 0) {
       ops.Node* left = leftstack[$ - 1];
       leftstack.popBack();
 
-      ops.Node* right = ops.parentList.thisNode;
+      ops.Node* right = pc;
 
-      ops.Node* newNode = cast(ops.Node*)GC.malloc(ops.Node.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
-
-      newNode.value    = right.value;
-      newNode.nextNode = left.nextNode;
-      left.nextNode = newNode;
-
-      ops.Node* newNode2 = cast(ops.Node*)GC.malloc(ops.Node.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
-      newNode2.value    = left.value;
-      newNode2.nextNode = right.nextNode;
-      right.nextNode = newNode2;
+      left.pair  = right;
+      right.pair = left;
     }
-
   }
 }

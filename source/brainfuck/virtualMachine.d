@@ -5,11 +5,14 @@ import brainfuck.virtualMemory,
        brainfuck.dlinkedlist,
        brainfuck.vmoperators,
        brainfuck.optimaizer;
+
 import std.algorithm.searching,
        std.array,
        std.stdio,
        std.string,
        std.conv;
+
+import core.memory;
 
 // DAFAULT IS USEING VIRTUALMEMORY BUT PRIMITIVE-STRAGE IS FASTHER AND PRIMITIVE-POINTER IS FASTEST
 // YOU CAN'T to be true primitiveStrage and primitivePointer at the same time.
@@ -18,31 +21,33 @@ import std.algorithm.searching,
   Envrionment : MacBookPro Retina mid 2014(CPU: i5 2.6 GHz(2C, 4T), RAM: 16GB)
                 DMD 2.070
 
-  USEING VirtualMemory class (default) : 18.54s (slowest)
-  USEING primitiveStrage option        : 9.49s  (middle)
-  USEING primitivePointer option       : 7.64s  (fastest)
+  NEWVM
+    USEING DLinkedList and raw Pointer (default) : 6.77s (fastest)
+    USEING primitiveStrage  option               : not available - new vm only support default way
+    USEING usevirtualmemory option               : not available - new vm only support default way
+  OLDVM
+    USEING Raw Pointer (default)                 : 7.57s  (fastest)
+    USEING primitiveStrage  option               : 8.80s  (middle)
+    USEING usevirtualmemory option               : 18.78s (slowest)
  */
-immutable primitiveStrage  = false;
-immutable primitivePointer = false;
 
-static if (primitivePointer) {
-  import core.memory;
-}
+immutable primitiveStrage  = false; // depricated
+immutable useVirtualMemory = false; // depricated
 
 class VirtualMachine {
   static if (primitiveStrage) {
     char[]   code;
     ubyte[]  memory;
     int[int] brackets;
-  } else static if (primitivePointer) {
-    char*    code;
-    ubyte*   memory;
-    int[int] brackets;
-  } else {
+  } else static if (useVirtualMemory) {
     private VirtualMemory!char  code;
     private VirtualMemory!ubyte memory;
     private VirtualMemory!int   brackets;
-  }
+  } else {
+    char*    code;
+    ubyte*   memory;
+    int[int] brackets;
+  } 
   
   private OperatorTable opTable;
   private ulong memoryIndex;
@@ -58,74 +63,71 @@ class VirtualMachine {
   }
 
   private void initVM() {
-    static if (primitiveStrage) {
-      code.length   = 300000;
-      memory.length = 300000;
-    } else static if (primitivePointer) {
-      code   = cast(char*) GC.malloc(300000 *  char.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
-      memory = cast(ubyte*)GC.malloc(300000 * ubyte.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
-    } else {
+    static if (useVirtualMemory){
       code     = new VirtualMemory!char;
       memory   = new VirtualMemory!ubyte;
       brackets = new VirtualMemory!int;
     }
   }
 
-  public void vmExec(DLinkedList!vmOperator ops) {
-    bracketOprimaize(ops);
-    
-    GC.realloc(code,   ops.length *  char.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
-    GC.realloc(memory, ops.length * ubyte.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
-    
-    for(ops.parentList.thisNode = ops.parentList.firstNode; ops.parentList.thisNode != null; ops.parentList.thisNode = ops.parentList.thisNode.nextNode) {
-      vmOperator op = ops.parentList.thisNode.value;
-      write(op.type);
-      switch (op.type) {
-        case 0:
-          memoryIndex++;
-          break;
+  static if (!primitiveStrage && !useVirtualMemory) {
+    public void vmExec(DLinkedList!vmOperator ops) {
+      bracketOprimaize(ops);
 
-        case 1:
-          memoryIndex--;
-          break;
+      code   = cast(char*) GC.malloc(300000 *  char.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
+      memory = cast(ubyte*)GC.malloc(300000 * ubyte.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
 
-        case 2:
-          ++memory[memoryIndex];
-          break;
+      for(ops.parentList.thisNode = ops.parentList.firstNode; ops.parentList.thisNode != null; ops.parentList.thisNode = ops.parentList.thisNode.nextNode) {
+        vmOperator op = ops.parentList.thisNode.value;
+        //write(op.type);
+        switch (op.type) {
+          case 0:
+            memoryIndex++;
+            break;
 
-        case 3:
-          --memory[memoryIndex];
-          break;
+          case 1:
+            memoryIndex--;
+            break;
 
-        case 4:
-          write(memory[memoryIndex].to!char);
-          stdout.flush();
-          break;
+          case 2:
+            memory[memoryIndex]++;
+            break;
 
-        case 5:
-          string buf;
-          while((buf = readln()) == null || !buf.length){}
-          memory[memoryIndex] = cast(ubyte)buf[0];
-          break;
+          case 3:
+            memory[memoryIndex]--;
+            break;
 
-        case 6:
-          if (memory[memoryIndex] == 0) {
-            ops.parentList.thisNode = ops.parentList.thisNode.nextNode;
-          } else {
-            ops.parentList.thisNode = ops.parentList.thisNode.nextNode.nextNode;
-          }
-          break;
+          case 4:
+            write(memory[memoryIndex].to!char);
+            stdout.flush();
+            break;
 
-        case 7:
-          if (memory[memoryIndex] != 0) {
-            ops.parentList.thisNode = ops.parentList.thisNode.nextNode;
-          } else {
-            ops.parentList.thisNode = ops.parentList.thisNode.nextNode.nextNode;
-          
-          }
-          break;
-        default: break;
+          case 5:
+            string buf;
+            while((buf = readln()) == null || !buf.length){}
+            memory[memoryIndex] = cast(ubyte)buf[0];
+            break;
+
+          case 6:
+            if (memory[memoryIndex] == 0) {
+              ops.parentList.thisNode = ops.parentList.thisNode.pair;
+            }
+
+            break;
+
+          case 7:
+            if (memory[memoryIndex] != 0) {
+              ops.parentList.thisNode = ops.parentList.thisNode.pair.prevNode;
+            }
+
+            break;
+
+          default: break;
+        }
       }
+
+      GC.free(code);
+      GC.free(memory);
     }
   }
 
@@ -135,13 +137,13 @@ class VirtualMachine {
     static if (primitiveStrage) {
       code.length   = _code.length;
       memory.length = _code.length;
-    } else static if (primitivePointer) {
-      GC.realloc(code,   _code.length *  char.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
-      GC.realloc(memory, _code.length * ubyte.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
-    } else {
+    } else static if (useVirtualMemory) {
       code.reallocate(_code.length);
       memory.reallocate(_code.length);
       brackets.reallocate(_code.length);
+    } else {
+      code   = cast(char*) GC.malloc(300000 *  char.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
+      memory = cast(ubyte*)GC.malloc(300000 * ubyte.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
     }
 
     foreach(i, e; _code) {
@@ -221,15 +223,12 @@ class VirtualMachine {
     static if (primitiveStrage) {
       code.length   = 0;
       memory.length = 0;
-    } else static if (primitivePointer) {
-      GC.free(code);
-      GC.free(memory);
-
-      code   = null;
-      memory = null;
-    } else {
+    } else static if (useVirtualMemory) {
       code.free;
       memory.free;
+    } else {
+      GC.free(code);
+      GC.free(memory);
     }
 
     memoryIndex = 0;

@@ -8,6 +8,8 @@ import std.string,
        std.file,
        std.conv;
 
+immutable useNewVM = true;
+
 void main(string[] args) {
   VirtualMachine vm;
   REPL repl;
@@ -19,9 +21,13 @@ void main(string[] args) {
     string fileName = args[1];
     if (exists(fileName)) {
       vm = new VirtualMachine;
-/*      OperatorTable opTable = new OperatorTable;
-      vm.vmExec(parser(opTable.compile(readText(fileName)).join.to!(char[])));*/
-      vm.process(readText(fileName));
+      OperatorTable opTable = new OperatorTable;
+
+      static if (useNewVM) {
+        vm.vmExec(parser(opTable.compile(readText(fileName)).join.to!(char[])));
+      } else {
+        vm.process(readText(fileName));
+      }
     } else {
       writeln("File not found such a file : ", fileName);
     }
