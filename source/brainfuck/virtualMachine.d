@@ -102,9 +102,12 @@ class VirtualMachine {
             break;
 
           case 5:
-            string buf;
-            while((buf = readln()) == null || !buf.length){}
-            memory[memoryIndex] = cast(ubyte)buf[0];
+            char[] buf = stdin.rawRead(new char[1]);
+            if (buf.empty) {
+                memory[memoryIndex] = cast(char)(-1);
+            } else {
+                memory[memoryIndex] = buf[0];
+            }
             break;
 
           case 6:
@@ -198,9 +201,12 @@ class VirtualMachine {
           break;
 
         case ',':
-          string buf;
-          while((buf = readln()) == null || !buf.length){}
-          memory[memoryIndex] = cast(ubyte)buf[0];
+          char[] buf = stdin.rawRead(new char[1]);
+          if (buf.empty) {
+              memory[memoryIndex] = cast(char)(-1);
+          } else {
+              memory[memoryIndex] = buf[0];
+          }
           break;
 
         case '[':
