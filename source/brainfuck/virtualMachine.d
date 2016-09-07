@@ -76,7 +76,9 @@ class VirtualMachine {
       code   = cast(char*) GC.malloc(300000 *  char.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
       memory = cast(ubyte*)GC.malloc(300000 * ubyte.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
 
-      for(ops.parentList.thisNode = ops.parentList.firstNode; ops.parentList.thisNode != null; ops.parentList.thisNode = ops.parentList.thisNode.nextNode) {
+      for(ops.parentList.thisNode = ops.parentList.firstNode;
+          ops.parentList.thisNode != null;
+          ops.parentList.thisNode = ops.parentList.thisNode.nextNode) {
         vmOperator op = ops.parentList.thisNode.value;
         //write(op.type);
         switch (op.type) {
@@ -104,9 +106,9 @@ class VirtualMachine {
           case 5:
             char[] buf = stdin.rawRead(new char[1]);
             if (buf.empty) {
-                memory[memoryIndex] = cast(char)(-1);
+              memory[memoryIndex] = cast(char)(-1);
             } else {
-                memory[memoryIndex] = buf[0];
+              memory[memoryIndex] = buf[0];
             }
             break;
 
@@ -203,9 +205,9 @@ class VirtualMachine {
         case ',':
           char[] buf = stdin.rawRead(new char[1]);
           if (buf.empty) {
-              memory[memoryIndex] = cast(char)(-1);
+            memory[memoryIndex] = cast(char)(-1);
           } else {
-              memory[memoryIndex] = buf[0];
+            memory[memoryIndex] = buf[0];
           }
           break;
 
