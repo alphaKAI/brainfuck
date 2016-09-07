@@ -40,6 +40,8 @@ class DLinkedList(T) {
       parentList.firstNode = parentList.lastNode = newNode;
       newNode.prevNode     = null;
     }
+
+    _length++;
   }
 
   void freeNode(Node *p) {
@@ -49,12 +51,14 @@ class DLinkedList(T) {
     }
 
     GC.free(p);
+    _length--;
   }
 
   void freeAllNode(Node *p) {
     if (p !is null) {
       freeAllNode(p.nextNode);
       GC.free(p);
+      _length--;
     }
   }
 
@@ -63,13 +67,10 @@ class DLinkedList(T) {
     GC.collect;
   }
 
-  @property size_t length() {
-    size_t _length;
-    for(parentList.thisNode = parentList.firstNode; parentList.thisNode != null; parentList.thisNode = parentList.thisNode.nextNode) {
-      _length++;
-    }
+  size_t _length;
 
-    return _length; 
+  @property size_t length() {
+    return _length;
   }
 
   T[] toArray() {
