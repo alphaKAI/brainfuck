@@ -73,8 +73,15 @@ class VirtualMachine {
     public void vmExec(DLinkedList!vmOperator ops) {
       bracketOprimaize(ops);
 
-      code   = cast(char*) GC.malloc(300000 *  char.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
-      memory = cast(ubyte*)GC.malloc(300000 * ubyte.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
+      enum defaultMemorySize = 300000;
+
+      if (ops.length > defaultMemorySize) {
+        code   = cast(char*) GC.malloc(ops.length *  char.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
+        memory = cast(ubyte*)GC.malloc(ops.length * ubyte.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
+      } else {
+        code   = cast(char*) GC.malloc(300000 *  char.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
+        memory = cast(ubyte*)GC.malloc(300000 * ubyte.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
+      }
 
       for(ops.parentList.thisNode = ops.parentList.firstNode;
           ops.parentList.thisNode != null;
