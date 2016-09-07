@@ -79,7 +79,9 @@ class DLinkedList(T) {
 
     arraySize = length;
 
-    for(parentList.thisNode = parentList.firstNode; parentList.thisNode != null; parentList.thisNode = parentList.thisNode.nextNode) {
+    for (parentList.thisNode = parentList.firstNode;
+         parentList.thisNode != null;
+         parentList.thisNode = parentList.thisNode.nextNode) {
       array ~= parentList.thisNode.value;
     }
 
@@ -92,11 +94,15 @@ class DLinkedList(T) {
 
     arraySize = length;
 
-    for(parentList.thisNode = parentList.firstNode; parentList.thisNode != null; parentList.thisNode = parentList.thisNode.nextNode) {
+    for (parentList.thisNode = parentList.firstNode;
+         parentList.thisNode != null;
+         parentList.thisNode = parentList.thisNode.nextNode) {
       arraySize++;
     }
 
-    for(parentList.thisNode = parentList.lastNode; parentList.thisNode != null; parentList.thisNode = parentList.thisNode.prevNode) {
+    for (parentList.thisNode = parentList.lastNode;
+         parentList.thisNode != null;
+         parentList.thisNode = parentList.thisNode.prevNode) {
       array ~= parentList.thisNode.value;
     }
 
@@ -104,8 +110,10 @@ class DLinkedList(T) {
   }
 
   bool findNode(T key) { 
-    for(parentList.thisNode = parentList.firstNode; parentList.thisNode != null; parentList.thisNode = parentList.thisNode.nextNode) {
-      if(compareElement(parentList.thisNode.value, key)) {
+    for (parentList.thisNode = parentList.firstNode;
+         parentList.thisNode != null;
+         parentList.thisNode = parentList.thisNode.nextNode) {
+      if (compareElement(parentList.thisNode.value, key)) {
         return true;
       }
     }
@@ -114,7 +122,8 @@ class DLinkedList(T) {
   }
 
   Node* pickupNode(Node* node) {
-      Node* returnNode = null;
+    Node* returnNode = null;
+
     for(parentList.thisNode = parentList.firstNode; parentList.thisNode != null; parentList.thisNode = parentList.thisNode.nextNode) {
       if(parentList.thisNode == node) {
         returnNode = parentList.thisNode;
@@ -127,8 +136,10 @@ class DLinkedList(T) {
 
   Node* pickupNode(T key) {
     Node* returnNode = null;
-    for(parentList.thisNode = parentList.firstNode; parentList.thisNode != null; parentList.thisNode = parentList.thisNode.nextNode) {
-      if(compareElement(parentList.thisNode.value, key)) {
+    for (parentList.thisNode = parentList.firstNode;
+         parentList.thisNode != null;
+         parentList.thisNode = parentList.thisNode.nextNode) {
+      if (compareElement(parentList.thisNode.value, key)) {
         returnNode = parentList.thisNode;
         break;
       }
@@ -138,13 +149,17 @@ class DLinkedList(T) {
   }
 
   void printAll() {
-    for(parentList.thisNode = parentList.firstNode; parentList.thisNode != null; parentList.thisNode = parentList.thisNode.nextNode) {
+    for (parentList.thisNode = parentList.firstNode;
+        parentList.thisNode != null;
+        parentList.thisNode = parentList.thisNode.nextNode) {
       writeln(parentList.thisNode.value);
     }
   }
 
   void printReAll() {
-    for(parentList.thisNode = parentList.lastNode; parentList.thisNode != null; parentList.thisNode = parentList.thisNode.prevNode) {
+    for (parentList.thisNode = parentList.lastNode;
+         parentList.thisNode != null;
+         parentList.thisNode = parentList.thisNode.prevNode) {
       writeln(parentList.thisNode.value);
     }
   }
